@@ -13,94 +13,94 @@ class ComposerStaticInit48c31c509bd32115522526f6c555ff47
     );
 
     public static $prefixLengthsPsr4 = array (
-        's' => 
+        's' =>
         array (
             'setasign\\Fpdi\\' => 14,
         ),
-        'T' => 
+        'T' =>
         array (
             'Tests\\Support\\' => 14,
         ),
-        'P' => 
+        'P' =>
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Container\\' => 14,
             'PhpParser\\' => 10,
         ),
-        'L' => 
+        'L' =>
         array (
             'Laminas\\Escaper\\' => 16,
         ),
-        'F' => 
+        'F' =>
         array (
             'Faker\\' => 6,
         ),
-        'D' => 
+        'D' =>
         array (
             'DeepCopy\\' => 9,
         ),
-        'C' => 
+        'C' =>
         array (
             'Config\\' => 7,
             'CodeIgniter\\' => 12,
         ),
-        'A' => 
+        'A' =>
         array (
             'App\\' => 4,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'setasign\\Fpdi\\' => 
+        'setasign\\Fpdi\\' =>
         array (
             0 => __DIR__ . '/..' . '/setasign/fpdi/src',
         ),
-        'Tests\\Support\\' => 
+        'Tests\\Support\\' =>
         array (
             0 => __DIR__ . '/../..' . '/tests/_support',
         ),
-        'Psr\\Log\\' => 
+        'Psr\\Log\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
         ),
-        'Psr\\Container\\' => 
+        'Psr\\Container\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'PhpParser\\' => 
+        'PhpParser\\' =>
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
-        'Laminas\\Escaper\\' => 
+        'Laminas\\Escaper\\' =>
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
-        'Faker\\' => 
+        'Faker\\' =>
         array (
             0 => __DIR__ . '/..' . '/fakerphp/faker/src/Faker',
         ),
-        'DeepCopy\\' => 
+        'DeepCopy\\' =>
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
-        'Config\\' => 
+        'Config\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app/Config',
         ),
-        'CodeIgniter\\' => 
+        'CodeIgniter\\' =>
         array (
             0 => __DIR__ . '/..' . '/codeigniter4/framework/system',
         ),
-        'App\\' => 
+        'App\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'o' => 
+        'o' =>
         array (
-            'org\\bovigo\\vfs\\' => 
+            'org\\bovigo\\vfs\\' =>
             array (
                 0 => __DIR__ . '/..' . '/mikey179/vfsstream/src/main/php',
             ),
@@ -108,22 +108,54 @@ class ComposerStaticInit48c31c509bd32115522526f6c555ff47
     );
 
     public static $classMap = array (
+        'App\\Controllers\\AdminUserController' => __DIR__ . '/../..' . '/app/Controllers/AdminUserController.php',
         'App\\Controllers\\Auth' => __DIR__ . '/../..' . '/app/Controllers/Auth.php',
+        'App\\Controllers\\BarangMasukController' => __DIR__ . '/../..' . '/app/Controllers/BarangMasukController.php',
         'App\\Controllers\\BaseController' => __DIR__ . '/../..' . '/app/Controllers/BaseController.php',
+        'App\\Controllers\\BeritaController' => __DIR__ . '/../..' . '/app/Controllers/BeritaController.php',
+        'App\\Controllers\\DIPController' => __DIR__ . '/../..' . '/app/Controllers/DIPController.php',
+        'App\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Controllers/DashboardController.php',
+        'App\\Controllers\\DataInternalController' => __DIR__ . '/../..' . '/app/Controllers/DataInternalController.php',
         'App\\Controllers\\DbrController' => __DIR__ . '/../..' . '/app/Controllers/DbrController.php',
+        'App\\Controllers\\DbrStrukturController' => __DIR__ . '/../..' . '/app/Controllers/DbrStrukturController.php',
+        'App\\Controllers\\HelpdeskController' => __DIR__ . '/../..' . '/app/Controllers/HelpdeskController.php',
+        'App\\Controllers\\HibahKeluarController' => __DIR__ . '/../..' . '/app/Controllers/HibahKeluarController.php',
+        'App\\Controllers\\HibahMasukController' => __DIR__ . '/../..' . '/app/Controllers/HibahMasukController.php',
         'App\\Controllers\\Home' => __DIR__ . '/../..' . '/app/Controllers/Home.php',
+        'App\\Controllers\\LoginController' => __DIR__ . '/../..' . '/app/Controllers/LoginController.php',
+        'App\\Controllers\\MasterBarangController' => __DIR__ . '/../..' . '/app/Controllers/MasterBarangController.php',
         'App\\Controllers\\NotifikasiController' => __DIR__ . '/../..' . '/app/Controllers/NotifikasiController.php',
+        'App\\Controllers\\PPIDController' => __DIR__ . '/../..' . '/app/Controllers/PPIDController.php',
         'App\\Controllers\\PdfController' => __DIR__ . '/../..' . '/app/Controllers/PdfController.php',
         'App\\Controllers\\PegawaiController' => __DIR__ . '/../..' . '/app/Controllers/PegawaiController.php',
+        'App\\Controllers\\PemeliharaanController' => __DIR__ . '/../..' . '/app/Controllers/PemeliharaanController.php',
         'App\\Controllers\\PeminjamanBarangController' => __DIR__ . '/../..' . '/app/Controllers/PeminjamanBarangController.php',
         'App\\Controllers\\PengajuanController' => __DIR__ . '/../..' . '/app/Controllers/PengajuanController.php',
         'App\\Controllers\\PermintaanBarangController' => __DIR__ . '/../..' . '/app/Controllers/PermintaanBarangController.php',
+        'App\\Controllers\\PersediaanController' => __DIR__ . '/../..' . '/app/Controllers/PersediaanController.php',
         'App\\Filters\\Cors' => __DIR__ . '/../..' . '/app/Filters/Cors.php',
+        'App\\Models\\AdminModel' => __DIR__ . '/../..' . '/app/Models/AdminModel.php',
+        'App\\Models\\BarangMasukModel' => __DIR__ . '/../..' . '/app/Models/BarangMasukModel.php',
+        'App\\Models\\BeritaModel' => __DIR__ . '/../..' . '/app/Models/BeritaModel.php',
+        'App\\Models\\DIPModel' => __DIR__ . '/../..' . '/app/Models/DIPModel.php',
+        'App\\Models\\DashboardModel' => __DIR__ . '/../..' . '/app/Models/DashboardModel.php',
+        'App\\Models\\DataInternalModel' => __DIR__ . '/../..' . '/app/Models/DataInternalModel.php',
+        'App\\Models\\DbrBagianModel' => __DIR__ . '/../..' . '/app/Models/DbrBagianModel.php',
+        'App\\Models\\DbrBagianPegawaiModel' => __DIR__ . '/../..' . '/app/Models/DbrBagianPegawaiModel.php',
+        'App\\Models\\DbrBarangModel' => __DIR__ . '/../..' . '/app/Models/DbrBarangModel.php',
+        'App\\Models\\DbrEselonModel' => __DIR__ . '/../..' . '/app/Models/DbrEselonModel.php',
+        'App\\Models\\DbrModel' => __DIR__ . '/../..' . '/app/Models/DbrModel.php',
+        'App\\Models\\HelpdeskModel' => __DIR__ . '/../..' . '/app/Models/HelpdeskModel.php',
+        'App\\Models\\HibahKeluarModel' => __DIR__ . '/../..' . '/app/Models/HibahKeluarModel.php',
+        'App\\Models\\MasterBarangModel' => __DIR__ . '/../..' . '/app/Models/MasterBarangModel.php',
         'App\\Models\\NotifikasiModel' => __DIR__ . '/../..' . '/app/Models/NotifikasiModel.php',
+        'App\\Models\\PPIDModel' => __DIR__ . '/../..' . '/app/Models/PPIDModel.php',
         'App\\Models\\PegawaiModel' => __DIR__ . '/../..' . '/app/Models/PegawaiModel.php',
+        'App\\Models\\PemeliharaanModel' => __DIR__ . '/../..' . '/app/Models/PemeliharaanModel.php',
         'App\\Models\\PeminjamanBarangModel' => __DIR__ . '/../..' . '/app/Models/PeminjamanBarangModel.php',
         'App\\Models\\PengajuanModel' => __DIR__ . '/../..' . '/app/Models/PengajuanModel.php',
         'App\\Models\\PermintaanBarangModel' => __DIR__ . '/../..' . '/app/Models/PermintaanBarangModel.php',
+        'App\\Models\\PersediaanModel' => __DIR__ . '/../..' . '/app/Models/PersediaanModel.php',
         'App\\Models\\UserModel' => __DIR__ . '/../..' . '/app/Models/UserModel.php',
         'CodeIgniter\\API\\ApiException' => __DIR__ . '/..' . '/codeigniter4/framework/system/API/ApiException.php',
         'CodeIgniter\\API\\BaseTransformer' => __DIR__ . '/..' . '/codeigniter4/framework/system/API/BaseTransformer.php',
