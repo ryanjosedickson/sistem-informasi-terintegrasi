@@ -7,8 +7,8 @@ use CodeIgniter\Model;
 class PegawaiModel extends Model
 {
     protected $table = 'pegawai';
-    protected $primaryKey = 'nip';
-    protected $useAutoIncrement = false;
+    protected $primaryKey = 'id';
+    protected $useAutoIncrement = true;
 
     protected $allowedFields = [
         'nama',
@@ -16,6 +16,6 @@ class PegawaiModel extends Model
         'jabatan',
         'pangkat_golongan',
         'unit_organisasi',
-        'password'
+        // 'password' || dihapus — auth pindah sepenuhnya ke UserModel
     ];
 }
