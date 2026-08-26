@@ -33,6 +33,7 @@ class ComposerStaticInit48c31c509bd32115522526f6c555ff47
         ),
         'F' =>
         array (
+            'Firebase\\JWT\\' => 13,
             'Faker\\' => 6,
         ),
         'D' =>
@@ -74,6 +75,10 @@ class ComposerStaticInit48c31c509bd32115522526f6c555ff47
         'Laminas\\Escaper\\' =>
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
+        ),
+        'Firebase\\JWT\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Faker\\' =>
         array (
@@ -133,7 +138,9 @@ class ComposerStaticInit48c31c509bd32115522526f6c555ff47
         'App\\Controllers\\PengajuanController' => __DIR__ . '/../..' . '/app/Controllers/PengajuanController.php',
         'App\\Controllers\\PermintaanBarangController' => __DIR__ . '/../..' . '/app/Controllers/PermintaanBarangController.php',
         'App\\Controllers\\PersediaanController' => __DIR__ . '/../..' . '/app/Controllers/PersediaanController.php',
+        'App\\Filters\\AuthFilter' => __DIR__ . '/../..' . '/app/Filters/AuthFilter.php',
         'App\\Filters\\Cors' => __DIR__ . '/../..' . '/app/Filters/Cors.php',
+        'App\\Libraries\\JwtHelper' => __DIR__ . '/../..' . '/app/Libraries/JwtHelper.php',
         'App\\Models\\AdminModel' => __DIR__ . '/../..' . '/app/Models/AdminModel.php',
         'App\\Models\\BarangMasukModel' => __DIR__ . '/../..' . '/app/Models/BarangMasukModel.php',
         'App\\Models\\BeritaModel' => __DIR__ . '/../..' . '/app/Models/BeritaModel.php',
@@ -1151,6 +1158,14 @@ class ComposerStaticInit48c31c509bd32115522526f6c555ff47
         'Faker\\Provider\\zh_TW\\Text' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/zh_TW/Text.php',
         'Faker\\UniqueGenerator' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/UniqueGenerator.php',
         'Faker\\ValidGenerator' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/ValidGenerator.php',
+        'Firebase\\JWT\\BeforeValidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/BeforeValidException.php',
+        'Firebase\\JWT\\CachedKeySet' => __DIR__ . '/..' . '/firebase/php-jwt/src/CachedKeySet.php',
+        'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
+        'Firebase\\JWT\\JWK' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWK.php',
+        'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
+        'Firebase\\JWT\\JWTExceptionWithPayloadInterface' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWTExceptionWithPayloadInterface.php',
+        'Firebase\\JWT\\Key' => __DIR__ . '/..' . '/firebase/php-jwt/src/Key.php',
+        'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
         'Laminas\\Escaper\\Escaper' => __DIR__ . '/..' . '/laminas/laminas-escaper/src/Escaper.php',
         'Laminas\\Escaper\\EscaperInterface' => __DIR__ . '/..' . '/laminas/laminas-escaper/src/EscaperInterface.php',
         'Laminas\\Escaper\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/laminas/laminas-escaper/src/Exception/ExceptionInterface.php',

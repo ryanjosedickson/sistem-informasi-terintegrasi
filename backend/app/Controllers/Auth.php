@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Models\PegawaiModel;
 use App\Models\UserModel;
-use App\Models\AdminModel;
+// use App\Models\AdminModel;
 
 class Auth extends BaseController
 {
@@ -51,9 +51,10 @@ class Auth extends BaseController
             ]);
         }
 
-        $model = new PegawaiModel();
+        $model = new UserModel();
 
-$user = $model->where('nip', $data['nip'])->first();
+// *Filter role = pegawai, supaya form Login Pegawai tidak bisa dipakai untuk login sebagai admin
+$user = $model->where('nip', $data['nip'])->where('role', 'pegawai')->first();
 
 if (!$user) {
     return $this->response->setStatusCode(401)->setJSON([
@@ -70,7 +71,7 @@ if (!password_verify($data['password'], $user['password'])) {
 }
 
         // === PERBAIKAN DI SINI: 'nama' bukan 'nama_lengkap' ===
-        $sessionData = [
+$sessionData = [
     'nip'        => $user['nip'],
     'nama'       => $user['nama'],
     'role'       => 'pegawai',
@@ -87,6 +88,7 @@ if (!password_verify($data['password'], $user['password'])) {
         ]);
 
     }
+
 public function loginAdmin()
 {
     $this->response->setHeader('Access-Control-Allow-Origin', '*');
@@ -99,38 +101,50 @@ public function loginAdmin()
 
     $data = $this->request->getJSON(true);
 
-    $model = new AdminModel();
-
-    $admin = $model
-        ->where('username', $data['username'])
-        ->first();
-
-    if (!$admin) {
-        return $this->response->setStatusCode(401)->setJSON([
-            "status" => false,
-            "message" => "Username tidak ditemukan"
+    if (empty($data['username']) || empty($data['password'])) {
+        return $this->response->setStatusCode(400)->setJSON([
+            'status' => false,
+            'message' => 'Username dan Password wajib diisi'
         ]);
     }
 
-    if ($admin['password'] != $data['password']) {
+    $model = new UserModel();
+
+    // Frontend mengirim field "username", tapi kolom di DB cuma "email"
+    // (lihat catatan di bawah)
+    $admin = $model->where('email', $data['username'])
+                    ->whereIn('role', ['admin_kepegawaian', 'admin_bmn', 'admin_humas'])
+                    ->first();
+
+    if (!$admin) {
         return $this->response->setStatusCode(401)->setJSON([
-            "status" => false,
-            "message" => "Password salah"
+            'status' => false,
+            'message' => 'Username tidak ditemukan'
+        ]);
+    }
+
+    if (!password_verify($data['password'], $admin['password'])) {
+        return $this->response->setStatusCode(401)->setJSON([
+            'status' => false,
+            'message' => 'Password salah'
         ]);
     }
 
     session()->set([
-        "username" => $admin["username"],
-        "role" => $admin["role"],
-        "isLoggedIn" => true
+        'nip'        => $admin['nip'],
+        'nama'       => $admin['nama'],
+        'role'       => $admin['role'],
+        'isLoggedIn' => true
     ]);
 
-    unset($admin["password"]);
+    unset($admin['password']);
 
+    // Response ini yang dipakai frontend untuk isi localStorage
+    // dan validasi expectedRole vs selectedRole
     return $this->response->setJSON([
-        "status" => true,
-        "message" => "Login berhasil",
-        "user" => $admin
+        'status' => true,
+        'message' => 'Login berhasil',
+        'user' => $admin   // { id, nip, nama, email, role, ... }
     ]);
 }
 
@@ -138,7 +152,7 @@ public function loginAdmin()
     {
         $this->response->setHeader('Access-Control-Allow-Origin', '*');
         
-        $model = new PegawaiModel();
+        $model = new UserModel();
         $data = $this->request->getJSON(true);
 
         $nip = $data["nip"] ?? '';
@@ -161,21 +175,21 @@ public function loginAdmin()
 
         return $this->response->setJSON(["status" => true, "message" => "Password berhasil diganti."]);
     }
-    public function initPasswordPegawai()
-{
-    $pegawaiModel = new \App\Models\PegawaiModel();
+public function initPasswordPegawai()
+    {
+        $userModel = new UserModel();
 
-    $pegawai = $pegawaiModel->findAll();
+        $pegawaiUsers = $userModel->where('role', 'pegawai')->findAll();
 
-    foreach ($pegawai as $p) {
-        $pegawaiModel->update($p['nip'], [
-            'password' => password_hash($p['nip'], PASSWORD_DEFAULT)
+        foreach ($pegawaiUsers as $u) {
+            $userModel->update($u['id'], [
+                'password' => password_hash($u['nip'], PASSWORD_DEFAULT)
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'status' => true,
+            'message' => 'Password seluruh pegawai berhasil diinisialisasi.'
         ]);
     }
-
-    return $this->response->setJSON([
-        'status' => true,
-        'message' => 'Password seluruh pegawai berhasil diinisialisasi.'
-    ]);
-}
 }
