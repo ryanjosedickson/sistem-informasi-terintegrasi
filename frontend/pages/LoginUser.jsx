@@ -161,14 +161,17 @@ localStorage.setItem("userRole", data.user.role);
 {/* BUTTON KEMBALI */}
 <div className="back-home-wrapper">
   <button
+    className="switch-login-btn"
+    onClick={() => navigate("/login-admin")}
+  >
+    <span>Login Sebagai Admin</span>
+  </button>
+
+  <button
     className="back-home-btn"
     onClick={() => navigate("/")}
   >
-    <img
-      src="/logo-back.png"
-      alt="Back"
-      className="back-icon"
-    />
+    <img src="/logo-back.png" alt="Back" className="back-icon" />
     <span>Kembali ke Beranda</span>
   </button>
 </div>

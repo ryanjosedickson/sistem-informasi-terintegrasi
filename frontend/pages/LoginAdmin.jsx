@@ -119,7 +119,17 @@ localStorage.setItem("adminDivision", selectedRole);
               </button>
 
               <div className="back-home-wrapper">
-                <button className="back-home-btn" onClick={() => navigate("/")}>
+                <button
+                  className="switch-login-btn"
+                  onClick={() => navigate("/login-user")}
+                >
+                  <span>Login Sebagai Pegawai</span>
+                </button>
+
+                <button
+                  className="back-home-btn"
+                  onClick={() => navigate("/")}
+                >
                   <img src="/logo-back.png" alt="Back" className="back-icon" />
                   <span>Kembali ke Beranda</span>
                 </button>
