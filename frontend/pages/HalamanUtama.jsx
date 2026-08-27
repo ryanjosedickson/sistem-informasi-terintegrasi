@@ -438,7 +438,7 @@ const handleNotificationClick = async (notif) => {
 
   <div className="footer-contact">
 
-    <h4>Kontak</h4>
+    <h3>Kontak</h3>
 
     <p>
       📍 Jl. M.H. Thamrin No. 6 Lt. 10–11,
@@ -464,6 +464,10 @@ const handleNotificationClick = async (notif) => {
     </p>
 
   </div>
+
+  <p>
+    ©2026 Sisfo Ditjen Bimas Kristen
+  </p>
 
       </footer>
     </div>
