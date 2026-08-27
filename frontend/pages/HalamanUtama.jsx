@@ -30,19 +30,22 @@ notifications.filter(
 ).length;
 
   useEffect(() => {
+    if (!nip) return;
 
-  if (!nip) return;
-
-  fetch(`http://localhost:8080/api/notifikasi/${nip}`)
-    .then((res) => res.json())
-    .then((data) => {
-      setNotifications(data);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-
-}, [nip]);
+    fetch(`http://localhost:8080/api/notifikasi/${nip}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Gagal memuat notifikasi (status ${res.status})`);
+        return res.json();
+      })
+      .then((data) => {
+        setNotifications(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setNotifications([]); // tetap array kosong, bukan biarkan undefined/object
+      });
+  }, 
+  [nip]);
 
 const handleAccess = (path) => {
 
