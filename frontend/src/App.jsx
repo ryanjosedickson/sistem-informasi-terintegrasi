@@ -1,5 +1,6 @@
 ﻿import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "../components/ProtectedRoute";
 import ScrollToTop from "../components/ScrollToTop";
 import HalamanUtama from "../pages/HalamanUtama";
 import Login from "../pages/Login";
@@ -106,21 +107,31 @@ function App() {
           element={<DashboardPegawai />}
         />
 
-        {/* ADMIN KEPEGAWAIAN */}
 <Route
   path="/admin-kepegawaian"
-  element={<AdminDashboard />}
+  element={
+    <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
+      <AdminDashboard />
+    </ProtectedRoute>
+  }
 />
 
-{/* ADMIN BMN */}
 <Route
   path="/admin-bmn"
-  element={<BMNAdmin />}
+  element={
+    <ProtectedRoute allowedRoles={["admin_bmn"]}>
+      <BMNAdmin />
+    </ProtectedRoute>
+  }
 />
 
 <Route
   path="/admin-kepegawaian/cuti"
-  element={<DashboardCuti />}
+  element={
+    <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
+      <DashboardCuti />
+    </ProtectedRoute>
+  }
 />
 
         {/* KEPEGAWAIAN */}
@@ -309,20 +320,13 @@ function App() {
           <Route path="/humasdata/dip" element={<Dip />} />
         </Route>
 
-
-        <Route
-  path="/admin-kepegawaian"
-  element={<AdminDashboard />}
-/>
-
-<Route
-  path="/admin-kepegawaian/cuti"
-  element={<DashboardCuti />}
-/>
-
 <Route
   path="/admin-kepegawaian/detail-pengajuan"
-  element={<DetailPengajuan />}
+  element={
+    <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
+      <DetailPengajuan />
+    </ProtectedRoute>
+  }
 />
 
 <Route
@@ -331,19 +335,20 @@ function App() {
 />
 
 <Route
-  path="/admin-bmn"
-  element={<BMNAdmin />}
-/>
-
-<Route path="/admin-humas" element={<HumasLayout />}>
+  path="/admin-humas"
+  element={
+    <ProtectedRoute allowedRoles={["admin_humas"]}>
+      <HumasLayout />
+    </ProtectedRoute>
+  }
+>
   <Route index element={<HumasAdmin />} />
   <Route path="berita-masuk" element={<BeritaMasuk />} />
   <Route path="permintaan-data" element={<DataPermintaan />} />
   <Route path="upload-dip" element={<UploadDip />} />
   <Route path="tiket-helpdesk" element={<Tiket />} />
   <Route path="keberatan-ppid" element={<Keberatan />} />
-</Route>
-         
+</Route>         
 
 
       </Routes>

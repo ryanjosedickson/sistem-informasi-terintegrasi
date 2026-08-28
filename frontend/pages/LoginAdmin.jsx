@@ -67,6 +67,8 @@ localStorage.setItem("currentUser", JSON.stringify(user));
 localStorage.setItem("isLoggedIn", "true");
 localStorage.setItem("userRole", user.role);
 localStorage.setItem("adminDivision", selectedRole);
+localStorage.setItem("userName", user.nama);   // baru
+localStorage.setItem("userNIP", user.nip);     // baru
 
 
       const tujuan = ROLE_REDIRECT[user.role] || "/";
