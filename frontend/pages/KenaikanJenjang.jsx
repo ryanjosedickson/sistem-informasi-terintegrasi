@@ -14,23 +14,27 @@ const [jabatan, setJabatan] = useState("");
 const [pangkat, setPangkat] = useState("");
 const [unitKerja, setUnitKerja] = useState("");
 useEffect(() => {
-  const nipLogin = localStorage.getItem("nip");
-
-  console.log("NIP LOGIN =", nipLogin);
+  const nipLogin = localStorage.getItem("userNIP");
 
   if (!nipLogin) return;
+
+  setNip(nipLogin);
 
   fetch(`http://localhost:8080/api/pegawai/${nipLogin}`)
     .then((res) => res.json())
     .then((data) => {
-      console.log("DATA PEGAWAI =", data);
-
-      setNip(data.nip || "");
       setNama(data.nama || "");
       setJabatan(data.jabatan || "");
       setPangkat(data.pangkat_golongan || "");
       setUnitKerja(data.unit_organisasi || "");
-    });
+      // Auto-fill jika kolom tempat_lahir/tanggal_lahir sudah
+      // tersedia di response API PegawaiController::getPegawaiByNip.
+      // Tetap dibiarkan editable, karena data ini mungkin belum
+      // lengkap untuk semua pegawai di data master.
+      setTempatLahir(data.tempat_lahir || "");
+      setTanggalLahir(data.tanggal_lahir || "");
+    })
+    .catch((error) => console.error(error));
 }, []);
 
 const [suratPermohonan, setSuratPermohonan] =
@@ -45,39 +49,6 @@ const [predikatSKP, setPredikatSKP] = useState("");
 const [jabatanTujuan, setJabatanTujuan] = useState("");
 const [jenjangUsulan, setJenjangUsulan] = useState("");
 const [nomorHP, setNomorHP] = useState("");
-console.log("STATE UNIT KERJA =", unitKerja);
-const handleNipChange = async (e) => {
-  const value = e.target.value;
-
-  setNip(value);
-
-  if (value.length < 5) return;
-
-  try {
-    const response = await fetch(
-      
-      `http://localhost:8080/api/pegawai/${value}`
-    );
-
-    const data = await response.json();
-    console.log("DATA =", data);
-    console.log("UNIT ORGANISASI =", data.unit_organisasi);
-
-    if (data) {
-      setNama(data.nama || "");
-      setJabatan(data.jabatan || "");
-      setPangkat(
-        data.pangkat_golongan || ""
-      );
-      setUnitKerja(
-        data.unit_organisasi || ""
-      );
-      console.log("SET UNIT =", data.unit_organisasi);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
 const handleSubmit = async () => {
 
   if (!suratPermohonan) {
@@ -251,9 +222,8 @@ for (const pair of formData.entries()) {
             <div className="nip-search">
               <input
   type="text"
-  placeholder="Masukkan NIP"
   value={nip}
-  onChange={handleNipChange}
+  readOnly
 />
             </div>
           </div>
@@ -322,13 +292,19 @@ setTanggalLahir(e.target.value)
           <div className="form-group">
             <label>Pendidikan Terakhir *</label>
 
-<input
-type="text"
-value={pendidikan}
-onChange={(e)=>
-setPendidikan(e.target.value)
-}
-/>
+            <select
+              value={pendidikan}
+              onChange={(e) => setPendidikan(e.target.value)}
+            >
+              <option value="">Pilih Pendidikan Terakhir</option>
+              <option value="D1">D1</option>
+              <option value="D2">D2</option>
+              <option value="D3">D3</option>
+              <option value="D4">D4</option>
+              <option value="S1">S1</option>
+              <option value="S2">S2</option>
+              <option value="S3">S3</option>
+            </select>
           </div>
 
           <div className="form-group">

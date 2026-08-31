@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import "./PengaktifanKembali.css";
 
@@ -27,30 +27,27 @@ const [linkDrive, setLinkDrive] =
   useState("");
 
 
-const handleNipChange = async (e) => {
-  const value = e.target.value;
+// Auto-fill data pegawai dari akun yang sedang login,
+// supaya pegawai tidak perlu ketik ulang NIP mereka sendiri
+useEffect(() => {
+  const nipLogin = localStorage.getItem("userNIP");
 
-  setNip(value);
+  if (!nipLogin) return;
 
-  if (value.length < 5) return;
+  setNip(nipLogin);
 
-  try {
-    const response = await fetch(
-      `http://localhost:8080/api/pegawai/${value}`
-    );
-
-    const data = await response.json();
-
-    if (data) {
-      setNama(data.nama || "");
-      setJabatan(data.jabatan || "");
-      setPangkat(data.pangkat_golongan || "");
-      setUnitKerja(data.unit_organisasi || "");
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
+  fetch(`http://localhost:8080/api/pegawai/${nipLogin}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data) {
+        setNama(data.nama || "");
+        setJabatan(data.jabatan || "");
+        setPangkat(data.pangkat_golongan || "");
+        setUnitKerja(data.unit_organisasi || "");
+      }
+    })
+    .catch((error) => console.error(error));
+}, []);
 
 const handleSubmit = async () => {
 
@@ -228,9 +225,8 @@ await Swal.fire({
 
             <input
   type="text"
-  placeholder="Masukkan NIP"
   value={nip}
-  onChange={handleNipChange}
+  readOnly
 />
           </div>
 
@@ -249,7 +245,7 @@ await Swal.fire({
 
             <input
   type="text"
-  value={jabatan}
+  value={pangkat}
   readOnly
 />
           </div>
@@ -258,9 +254,10 @@ await Swal.fire({
             <label>Jabatan Fungsional</label>
 
             <input
-              type="text"
-              placeholder="Masukkan Jabatan Fungsional"
-            />
+  type="text"
+  value={jabatan}
+  readOnly
+/>
           </div>
 
           <div className="form-group">

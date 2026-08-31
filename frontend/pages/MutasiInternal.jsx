@@ -1,6 +1,6 @@
 import "./MutasiInternal.css";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
 function MutasiInternal() {
@@ -12,6 +12,17 @@ const [jabatan, setJabatan] = useState("");
 const [unitKerja, setUnitKerja] = useState("");
 const [status, setStatus] = useState("Menunggu");
 
+// Gelar akademik diisi manual oleh pegawai saat pengajuan,
+// karena bisa berubah-ubah dan tidak tersimpan di data master pegawai.
+const [gelarDepan, setGelarDepan] = useState("");
+const [gelarBelakang, setGelarBelakang] = useState("");
+
+// Format standar penulisan gelar akademik Indonesia:
+// {Gelar Depan} {Nama}, {Gelar Belakang}
+const namaLengkap = `${gelarDepan ? gelarDepan.trim() + " " : ""}${nama}${
+  gelarBelakang ? ", " + gelarBelakang.trim() : ""
+}`.trim();
+
 const [suratPermohonan, setSuratPermohonan] =
   useState(null);
 
@@ -22,7 +33,7 @@ const [linkDrive, setLinkDrive] =
     const formData = new FormData();
 
 formData.append("nip", nip);
-formData.append("nama", nama);
+formData.append("nama", namaLengkap);
 formData.append("jabatan", jabatan);
 formData.append("unit_kerja", unitKerja);
 
@@ -116,29 +127,26 @@ if (result.success) {
 }
 };
 
-const handleNipChange = async (e) => {
-  const value = e.target.value;
+// Auto-fill data pegawai dari akun yang sedang login,
+// supaya pegawai tidak perlu ketik ulang NIP mereka sendiri
+useEffect(() => {
+  const nipLogin = localStorage.getItem("userNIP");
 
-  setNip(value);
+  if (!nipLogin) return;
 
-  if (value.length < 5) return;
+  setNip(nipLogin);
 
-  try {
-    const response = await fetch(
-      `http://localhost:8080/api/pegawai/${value}`
-    );
-
-    const data = await response.json();
-
-    if (data) {
-      setNama(data.nama || "");
-      setJabatan(data.jabatan || "");
-      setUnitKerja(data.unit_organisasi || "");
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
+  fetch(`http://localhost:8080/api/pegawai/${nipLogin}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data) {
+        setNama(data.nama || "");
+        setJabatan(data.jabatan || "");
+        setUnitKerja(data.unit_organisasi || "");
+      }
+    })
+    .catch((error) => console.error(error));
+}, []);
   
   return (
     <div className="mutasiinternal-page">
@@ -208,26 +216,49 @@ const handleNipChange = async (e) => {
       <div className="form-grid">
 
         <div className="form-group">
-          <label>NIP *</label>
+          <label>NIP</label>
           <input
             type="text"
-            placeholder="Masukkan NIP"
             value={nip}
-            onChange={handleNipChange}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Nama + Gelar Akademik *</label>
-          <input
-            type="text"
-            value={nama}
             readOnly
           />
         </div>
 
         <div className="form-group">
-          <label>Jabatan *</label>
+          <label>Nama + Gelar Akademik</label>
+
+          <div style={{ display: "flex", gap: "8px" }}>
+            <input
+              type="text"
+              placeholder="Gelar Depan"
+              value={gelarDepan}
+              onChange={(e) => setGelarDepan(e.target.value)}
+              style={{ maxWidth: "110px" }}
+            />
+
+            <input
+              type="text"
+              value={nama}
+              readOnly
+              style={{ flex: 1 }}
+            />
+
+            <input
+              type="text"
+              placeholder="Gelar Belakang"
+              value={gelarBelakang}
+              onChange={(e) => setGelarBelakang(e.target.value)}
+              style={{ maxWidth: "170px" }}
+            />
+          </div>
+
+          <p style={{ fontSize: "12px", color: "#64748b", marginTop: "6px" }}>
+            Pratinjau: {namaLengkap || "-"}
+          </p>
+        </div>
+
+        <div className="form-group">
+          <label>Jabatan</label>
           <input
             type="text"
             value={jabatan}
@@ -236,7 +267,7 @@ const handleNipChange = async (e) => {
         </div>
 
         <div className="form-group">
-          <label>Unit / Satuan Kerja Asal *</label>
+          <label>Unit / Satuan Kerja Asal</label>
           <input
             type="text"
             value={unitKerja}
