@@ -1,4 +1,4 @@
-﻿import "./App.css";
+import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoute";
 import ScrollToTop from "../components/ScrollToTop";
@@ -69,6 +69,17 @@ const currentUser = JSON.parse(
   localStorage.getItem("currentUser") || "null"
 );
 
+// Role yang boleh mengakses halaman/fitur pegawai.
+// Ketiga role admin ikut disertakan supaya admin bisa akses
+// layanan pegawai memakai NIP & akun mereka sendiri,
+// tanpa perlu akun kedua.
+const PEGAWAI_ACCESS = [
+  "pegawai",
+  "admin_kepegawaian",
+  "admin_bmn",
+  "admin_humas",
+];
+
 
 function App() {
   return (
@@ -104,42 +115,59 @@ function App() {
         {/* DASHBOARD PEGAWAI */}
         <Route
           path="/dashboard-pegawai"
-          element={<DashboardPegawai />}
+          element={
+            <ProtectedRoute allowedRoles={PEGAWAI_ACCESS} redirectTo="/login-user">
+              <DashboardPegawai />
+            </ProtectedRoute>
+          }
         />
 
-<Route
-  path="/admin-kepegawaian"
-  element={
-    <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
-      <AdminDashboard />
-    </ProtectedRoute>
-  }
-/>
+        {/* ADMIN KEPEGAWAIAN */}
+        <Route
+          path="/admin-kepegawaian"
+          element={
+            <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/admin-bmn"
-  element={
-    <ProtectedRoute allowedRoles={["admin_bmn"]}>
-      <BMNAdmin />
-    </ProtectedRoute>
-  }
-/>
+        {/* ADMIN BMN */}
+        <Route
+          path="/admin-bmn"
+          element={
+            <ProtectedRoute allowedRoles={["admin_bmn"]}>
+              <BMNAdmin />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/admin-kepegawaian/cuti"
-  element={
-    <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
-      <DashboardCuti />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/admin-kepegawaian/cuti"
+          element={
+            <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
+              <DashboardCuti />
+            </ProtectedRoute>
+          }
+        />
 
         {/* KEPEGAWAIAN */}
-        <Route path="/ganti-password" element={<GantiPassword />} />
-        
+        <Route
+          path="/ganti-password"
+          element={
+            <ProtectedRoute allowedRoles={PEGAWAI_ACCESS} redirectTo="/login-user">
+              <GantiPassword />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/kepegawaian"
-          element={<Kepegawaian />}
+          element={
+            <ProtectedRoute allowedRoles={PEGAWAI_ACCESS} redirectTo="/login-user">
+              <Kepegawaian />
+            </ProtectedRoute>
+          }
         >
 
           <Route
@@ -234,7 +262,11 @@ function App() {
 
         <Route
           path="/data/request"
-          element={<DataRequest />}
+          element={
+            <ProtectedRoute allowedRoles={PEGAWAI_ACCESS} redirectTo="/login-user">
+              <DataRequest />
+            </ProtectedRoute>
+          }
         />
 
         {/* 
@@ -246,7 +278,11 @@ function App() {
 
         <Route
           path="/ppid/request"
-          element={<PPIDRequest />}
+          element={
+            <ProtectedRoute allowedRoles={PEGAWAI_ACCESS} redirectTo="/login-user">
+              <PPIDRequest />
+            </ProtectedRoute>
+          }
         />
 
         {/* 
@@ -262,50 +298,68 @@ function App() {
 
         <Route
           path="/ppid/admin-humas/dip"
-          element={<PPIDAdminDashboard />}
+          element={
+            <ProtectedRoute allowedRoles={["admin_humas"]}>
+              <PPIDAdminDashboard />
+            </ProtectedRoute>
+          }
         />
 
-        <Route path="/bmn" element={<DashboardUser />}>
+        <Route
+          path="/bmn"
+          element={
+            <ProtectedRoute allowedRoles={PEGAWAI_ACCESS} redirectTo="/login-user">
+              <DashboardUser />
+            </ProtectedRoute>
+          }
+        >
 
-  <Route
-    path="peminjaman"
-    element={<PeminjamanUser />}
-  />
+          <Route
+            path="peminjaman"
+            element={<PeminjamanUser />}
+          />
 
-  <Route
-    path="permintaan"
-    element={<PermintaanUser />}
-  />
+          <Route
+            path="permintaan"
+            element={<PermintaanUser />}
+          />
 
-  <Route
-    path="dbr"
-    element={<DBRUser />}
-  />
+          <Route
+            path="dbr"
+            element={<DBRUser />}
+          />
 
-  <Route
-    path="pemeliharaan"
-    element={<PemeliharaanUser />}
-  />
+          <Route
+            path="pemeliharaan"
+            element={<PemeliharaanUser />}
+          />
 
-</Route>
+        </Route>
 
-        
-        {/* HUMAS - PARENT ROUTE DENGAN SIDEBAR */} 
-        <Route path="/humasdata" element={<HumasData />}>
+
+        {/* HUMAS - PARENT ROUTE DENGAN SIDEBAR */}
+        <Route
+          path="/humasdata"
+          element={
+            <ProtectedRoute allowedRoles={PEGAWAI_ACCESS} redirectTo="/login-user">
+              <HumasData />
+            </ProtectedRoute>
+          }
+        >
           {/* Default: DashboardHumas saat akses /humasdata */}
           <Route index element={<DashboardHumas />} />
-  
+
           {/* Publikasi */}
           <Route path="publikasi" element={<Publikasi />} />
           <Route path="publikasi/form-pengajuan" element={<FormPengajuan />} />
           <Route path="publikasi/daftar-pengajuan" element={<DaftarPengajuan />} />
           <Route path="/humasdata/publikasi/detail-berita/:id" element={<DetailBerita />}/>
-  
+
           {/* Permintaan Data Internal */}
           <Route path="PermintaanData" element={<PermintaanData/>} />
           <Route path="PermintaanData/DataInternal" element={<DataInternal />} />
           <Route path="PermintaanData/StatusData" element={<StatusData />} />
-  
+
           {/* HelpDesk */}
           <Route path="helpdesk" element={<Helpdesk />} />
           <Route path="helpdesk/FormHelpdesk" element={<FormHelpdesk />} />
@@ -315,40 +369,44 @@ function App() {
           <Route path="PPID" element={<PPID />} />
           <Route path="PPID/Permohonan" element={<Permohonan />} />
           <Route path="PPID/StatusPermohonan" element={<StatusPermohonan />} />
-          
+
 
           <Route path="/humasdata/dip" element={<Dip />} />
         </Route>
 
-<Route
-  path="/admin-kepegawaian/detail-pengajuan"
-  element={
-    <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
-      <DetailPengajuan />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/admin-kepegawaian/detail-pengajuan"
+          element={
+            <ProtectedRoute allowedRoles={["admin_kepegawaian"]}>
+              <DetailPengajuan />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/kepegawaian/detail-pengajuan"
-  element={<DetailPengajuanUser />}
-/>
+        <Route
+          path="/kepegawaian/detail-pengajuan"
+          element={
+            <ProtectedRoute allowedRoles={PEGAWAI_ACCESS} redirectTo="/login-user">
+              <DetailPengajuanUser />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/admin-humas"
-  element={
-    <ProtectedRoute allowedRoles={["admin_humas"]}>
-      <HumasLayout />
-    </ProtectedRoute>
-  }
->
-  <Route index element={<HumasAdmin />} />
-  <Route path="berita-masuk" element={<BeritaMasuk />} />
-  <Route path="permintaan-data" element={<DataPermintaan />} />
-  <Route path="upload-dip" element={<UploadDip />} />
-  <Route path="tiket-helpdesk" element={<Tiket />} />
-  <Route path="keberatan-ppid" element={<Keberatan />} />
-</Route>         
+        <Route
+          path="/admin-humas"
+          element={
+            <ProtectedRoute allowedRoles={["admin_humas"]}>
+              <HumasLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<HumasAdmin />} />
+          <Route path="berita-masuk" element={<BeritaMasuk />} />
+          <Route path="permintaan-data" element={<DataPermintaan />} />
+          <Route path="upload-dip" element={<UploadDip />} />
+          <Route path="tiket-helpdesk" element={<Tiket />} />
+          <Route path="keberatan-ppid" element={<Keberatan />} />
+        </Route>
 
 
       </Routes>

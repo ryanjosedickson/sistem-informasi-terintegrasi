@@ -135,21 +135,7 @@ if (!pegawai) {
 
           <div
             className="menu-card"
-            onClick={() => {
-
-  localStorage.removeItem("user");
-
-  localStorage.removeItem(
-    "userNIP"
-  );
-
-  localStorage.setItem(
-  "userNIP",
-  data.user.nip
-  );
-
-  navigate("/login");
-}}
+            onClick={() => navigate("/kepegawaian/cuti")}
           >
             <div className="menu-icon">🏖️</div>
 

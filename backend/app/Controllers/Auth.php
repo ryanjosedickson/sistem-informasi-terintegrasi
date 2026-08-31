@@ -54,7 +54,7 @@ class Auth extends BaseController
         $model = new UserModel();
 
 // *Filter role = pegawai, supaya form Login Pegawai tidak bisa dipakai untuk login sebagai admin
-$user = $model->where('nip', $data['nip'])->where('role', 'pegawai')->first();
+$user = $model->where('nip', $data['nip'])->first();
 
 if (!$user) {
     return $this->response->setStatusCode(401)->setJSON([
@@ -74,7 +74,7 @@ if (!password_verify($data['password'], $user['password'])) {
 $sessionData = [
     'nip'        => $user['nip'],
     'nama'       => $user['nama'],
-    'role'       => 'pegawai',
+    'role'       => $user['role'],
     'isLoggedIn' => true
 ];
         session()->set($sessionData);
@@ -101,10 +101,10 @@ public function loginAdmin()
 
     $data = $this->request->getJSON(true);
 
-    if (empty($data['username']) || empty($data['password'])) {
+    if (empty($data['nip']) || empty($data['password'])) {
         return $this->response->setStatusCode(400)->setJSON([
             'status' => false,
-            'message' => 'Username dan Password wajib diisi'
+            'message' => 'NIP dan Password wajib diisi'
         ]);
     }
 
@@ -112,14 +112,14 @@ public function loginAdmin()
 
     // Frontend mengirim field "username", tapi kolom di DB cuma "email"
     // (lihat catatan di bawah)
-    $admin = $model->where('email', $data['username'])
+    $admin = $model->where('nip', $data['nip'])
                     ->whereIn('role', ['admin_kepegawaian', 'admin_bmn', 'admin_humas'])
                     ->first();
 
     if (!$admin) {
         return $this->response->setStatusCode(401)->setJSON([
             'status' => false,
-            'message' => 'Username tidak ditemukan'
+            'message' => 'NIP tidak ditemukan'
         ]);
     }
 
@@ -144,7 +144,7 @@ public function loginAdmin()
     return $this->response->setJSON([
         'status' => true,
         'message' => 'Login berhasil',
-        'user' => $admin   // { id, nip, nama, email, role, ... }
+        'user' => $admin
     ]);
 }
 

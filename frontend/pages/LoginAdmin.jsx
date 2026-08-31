@@ -22,7 +22,7 @@ function LoginAdmin() {
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState("");
-  const [username, setUsername] = useState("");
+  const [nip, setNip] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -38,7 +38,7 @@ function LoginAdmin() {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    username,
+    nip,
     password,
   }),
 });
@@ -146,14 +146,14 @@ localStorage.setItem("userNIP", user.nip);     // baru
               <h2>{getRoleTitle()}</h2>
 
               <div className="form-group">
-                <label>Username</label>
+                <label>NIP</label>
 
-<input
-  type="text"
-  placeholder="Masukkan Username"
-  value={username}
-  onChange={(e) => setUsername(e.target.value)}
-/>
+              <input
+                type="text"
+                placeholder="Masukkan NIP"
+                value={nip}
+                onChange={(e) => setNip(e.target.value)}
+              />
               </div>
 
               <div className="form-group">

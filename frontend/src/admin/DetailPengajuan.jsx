@@ -11,206 +11,148 @@ export default function DetailPengajuan() {
   const location = useLocation();
   const [suratRespon, setSuratRespon] = useState(null);
 
-  const formatLabel = (text) => {
-  return text
-    .replace(/([A-Z])/g, " $1")
-    .replace(/_/g, " ")
-    .replace(/^./, (str) => str.toUpperCase());
-};
-
   const [data, setData] = useState(location.state);
-useEffect(() => {
-
-  if (!data?.id) return;
-
-  const loadData = async () => {
-
-    try {
-
-      // ambil data pengajuan
-      const resPengajuan = await fetch(
-        `http://localhost:8080/api/pengajuan/detail/${data.id}`
-      );
-
-      const pengajuan = await resPengajuan.json();
-
-      // ambil data pegawai
-      const resPegawai = await fetch(
-        `http://localhost:8080/api/pegawai/${pengajuan.nip}`
-      );
-
-      const pegawai = await resPegawai.json();
-
-      setData({
-        ...pengajuan,
-
-        unit_kerja:
-          pengajuan.unit_kerja ||
-          pegawai.unit_organisasi ||
-          "-",
-
-        jabatan:
-          pengajuan.jabatan ||
-          pegawai.jabatan,
-
-      });
-
-    } catch (err) {
-
-      console.error(err);
-
-    }
-
-  };
-
-  loadData();
-
-  const interval = setInterval(loadData, 5000);
-
-  return () => clearInterval(interval);
-
-}, [data?.id]);
-
-  console.log("DATA =", data);
-  console.log("LINK DRIVE =", data?.link_drive);
-  console.log(JSON.parse(data.data_pengajuan));
-
-  const detail =
-  data?.data_pengajuan
-    ? JSON.parse(data.data_pengajuan)
-    : {};
-  
-  const dokumen = [];
-
-Object.keys(detail).forEach((key) => {
-  const value = detail[key];
-
-  if (
-    typeof value === "string" &&
-    (
-      value.endsWith(".pdf") ||
-      value.endsWith(".jpg") ||
-      value.endsWith(".jpeg") ||
-      value.endsWith(".png")
-    )
-  ) {
-    dokumen.push({
-      nama: value.split("/").pop(),
-      file: `http://localhost:8080/${value}`
-    });
-  }
-});
-  
-  console.log(data);
-  console.log(detail);
-  
-  const formData = data?.data_pengajuan
-  ? JSON.parse(data.data_pengajuan)
-  : {};
-
-  console.log("ID =", data.id);
-  console.log("STATUS SEKARANG =", data.status);
-
-  const updateStatus = async (
-    statusBaru,
-    catatan=""
-)=>{
-
-  console.log("========== UPDATE ==========");
-  console.log("ID =", data.id);
-  console.log("UPDATE KE =", statusBaru);
-  console.log(
-    "URL =",
-    `http://localhost:8080/api/pengajuan/${data.id}`
-  );
-
-    const formData = new FormData();
-
-    formData.append(
-        "status",
-        statusBaru
-    );
-
-    formData.append(
-        "catatan_admin",
-        catatan
-    );
-
-    if(suratRespon){
-
-        formData.append(
-            "file_respon",
-            suratRespon
-        );
-
-    }
-    console.log("ID =", data.id);
-console.log("STATUS =", status);
-
-    const response=await fetch(
-
-        `http://localhost:8080/api/pengajuan/${data.id}`,
-
-        {
-
-            method:"POST",
-
-            body:formData
-
-        }
-        
-
-    );
-    console.log(response.status);
-    console.log("HTTP =", response.status);
-
-const result = await response.json();
-
-console.log(result);
-
-if (!result.success) {
-    Swal.fire({
-  icon: "error",
-  title: "Gagal",
-  text: result.error || result.message,
-  confirmButtonColor: "#dc2626",
-});
-    return;
-}
-console.log(result);
-
-setStatus(statusBaru);
-setCatatanAdmin(catatan);
-
-const res = await fetch(
-    `http://localhost:8080/api/pengajuan/detail/${data.id}`
-);
-
-const terbaru = await res.json();
-
-setData(terbaru);
-
-Swal.fire({
-  icon: "success",
-  title: "Berhasil",
-  text: "Status pengajuan berhasil diperbarui.",
-  confirmButtonColor: "#2563eb",
-});
-
-}
 
   const [status, setStatus] = useState(
     data?.status || "Menunggu"
   );
-  useEffect(() => {
-  if (data) {
-    setStatus(data.status);
-    setCatatanAdmin(data.catatan_admin || "");
-  }
-}, [data]);
 
   const [catatanAdmin, setCatatanAdmin] =
     useState("");
+
+  useEffect(() => {
+
+    if (!data?.id) return;
+
+    const loadData = async () => {
+
+      try {
+
+        // ambil data pengajuan
+        const resPengajuan = await fetch(
+          `http://localhost:8080/api/pengajuan/detail/${data.id}`
+        );
+
+        const pengajuan = await resPengajuan.json();
+
+        // ambil data pegawai (hanya jika NIP tersedia)
+        let pegawai = {};
+
+        if (pengajuan?.nip) {
+          const resPegawai = await fetch(
+            `http://localhost:8080/api/pegawai/${pengajuan.nip}`
+          );
+          pegawai = await resPegawai.json();
+        }
+
+        setData({
+          ...pengajuan,
+
+          unit_kerja:
+            pengajuan.unit_kerja ||
+            pegawai.unit_organisasi ||
+            "-",
+
+          jabatan:
+            pengajuan.jabatan ||
+            pegawai.jabatan,
+
+        });
+
+      } catch (err) {
+
+        console.error(err);
+
+      }
+
+    };
+
+    loadData();
+
+    const interval = setInterval(loadData, 5000);
+
+    return () => clearInterval(interval);
+
+  }, [data?.id]);
+
+  useEffect(() => {
+    if (data) {
+      setStatus(data.status);
+      setCatatanAdmin(data.catatan_admin || "");
+    }
+  }, [data]);
+
+  const updateStatus = async (
+    statusBaru,
+    catatan = ""
+  ) => {
+
+    const formData = new FormData();
+
+    formData.append(
+      "status",
+      statusBaru
+    );
+
+    formData.append(
+      "catatan_admin",
+      catatan
+    );
+
+    if (suratRespon) {
+
+      formData.append(
+        "file_respon",
+        suratRespon
+      );
+
+    }
+
+    const response = await fetch(
+
+      `http://localhost:8080/api/pengajuan/${data.id}`,
+
+      {
+
+        method: "POST",
+
+        body: formData
+
+      }
+
+    );
+
+    const result = await response.json();
+
+    if (!result.success) {
+      Swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: result.error || result.message,
+        confirmButtonColor: "#dc2626",
+      });
+      return;
+    }
+
+    setStatus(statusBaru);
+    setCatatanAdmin(catatan);
+
+    const res = await fetch(
+      `http://localhost:8080/api/pengajuan/detail/${data.id}`
+    );
+
+    const terbaru = await res.json();
+
+    setData(terbaru);
+
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil",
+      text: "Status pengajuan berhasil diperbarui.",
+      confirmButtonColor: "#2563eb",
+    });
+
+  };
 
   if (!data) {
     return (
@@ -226,10 +168,10 @@ Swal.fire({
             className="back-btn"
           >
             <img
-      src="/logo-back.png"
-      alt="Back"
-      className="back-icon"
-    />
+              src="/logo-back.png"
+              alt="Back"
+              className="back-icon"
+            />
           </button>
 
         </div>
@@ -238,58 +180,56 @@ Swal.fire({
     );
   }
 
-const handleApprove = async () => {
-
-    console.log("TOMBOL SELESAI DIKLIK");
+  const handleApprove = async () => {
 
     if (!suratRespon && !data.file_respon) {
-    Swal.fire({
+      Swal.fire({
         icon: "warning",
         title: "Surat Belum Diunggah",
         text: "Silakan upload Surat Balasan Admin terlebih dahulu.",
         confirmButtonColor: "#f59e0b",
-    });
-    return;
-}
+      });
+      return;
+    }
 
     await updateStatus(
-        "Selesai",
-        catatanAdmin
+      "Selesai",
+      catatanAdmin
     );
 
-};
+  };
 
 
-const handleProcess = async () => {
+  const handleProcess = async () => {
 
-  await updateStatus(
+    await updateStatus(
       "Diproses",
       catatanAdmin
-  );
-
-};
-
-const handleReject = async () => {
-
-  const result = await Swal.fire({
-    title: "Tolak Pengajuan?",
-    text: "Status pengajuan akan diubah menjadi Ditolak.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Ya, Tolak",
-    cancelButtonText: "Batal",
-    confirmButtonColor: "#dc2626",
-    cancelButtonColor: "#6b7280",
-  });
-
-  if (result.isConfirmed) {
-    await updateStatus(
-      "Ditolak",
-      catatanAdmin
     );
-  }
 
-};
+  };
+
+  const handleReject = async () => {
+
+    const result = await Swal.fire({
+      title: "Tolak Pengajuan?",
+      text: "Status pengajuan akan diubah menjadi Ditolak.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, Tolak",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+    });
+
+    if (result.isConfirmed) {
+      await updateStatus(
+        "Ditolak",
+        catatanAdmin
+      );
+    }
+
+  };
 
   return (
     <div className="detail-page">
@@ -297,142 +237,141 @@ const handleReject = async () => {
       <div className="detail-card">
 
         {/* HEADER */}
-{/* HEADER */}
 
-<button
-  className="back-btn"
-  onClick={() => navigate(-1)}
->
-  ← Kembali
-</button>
+        <button
+          className="back-btn"
+          onClick={() => navigate(-1)}
+        >
+          ← Kembali
+        </button>
 
-<div className="detail-header">
+        <div className="detail-header">
 
-  <div className="header-content">
+          <div className="header-content">
 
-    <div className="profile-section">
+            <div className="profile-section">
 
-      <div className="avatar-circle">
-        {data.nama?.charAt(0)}
-      </div>
+              <div className="avatar-circle">
+                {data.nama?.charAt(0)}
+              </div>
 
-      <div className="header-info">
+              <div className="header-info">
 
-        <h1>Detail Pengajuan</h1>
+                <h1>Detail Pengajuan</h1>
 
-        <h2>{data.nama}</h2>
+                <h2>{data.nama}</h2>
 
-        <p>
-          {data.unit_kerja || "-"} • {data.tanggal_pengajuan || "-"}
-        </p>
+                <p>
+                  {data.unit_kerja || "-"} • {data.tanggal_pengajuan || "-"}
+                </p>
 
-      </div>
+              </div>
 
-    </div>
+            </div>
 
-    <div className="status-section">
+            <div className="status-section">
 
-      <span
-        className={`status-badge ${
-          status === "Menunggu"
-            ? "pending"
-            : status === "Diproses"
-            ? "process"
-            : status === "Selesai"
-            ? "approved"
-            : "rejected"
-        }`}
-      >
-        {status}
-      </span>
+              <span
+                className={`status-badge ${
+                  status === "Menunggu"
+                    ? "pending"
+                    : status === "Diproses"
+                    ? "process"
+                    : status === "Selesai"
+                    ? "approved"
+                    : "rejected"
+                }`}
+              >
+                {status}
+              </span>
 
-    </div>
+            </div>
 
-  </div>
+          </div>
 
-</div>
-
-{/* TIMELINE */}
-<div className="detail-section">
-
-  <h3>Status Pengajuan</h3>
-
-  <div className="timeline">
-
-    <div className="timeline-item">
-      <div className="timeline-dot"></div>
-
-      <div className="timeline-content">
-        <h4>Pengajuan Dikirim</h4>
-        <p>
-          Pengajuan telah masuk ke sistem.
-        </p>
-      </div>
-    </div>
-
-    {(status === "Diproses" ||
-      status === "Selesai") && (
-      <div className="timeline-item">
-        <div className="timeline-dot"></div>
-
-        <div className="timeline-content">
-          <h4>Diproses Admin</h4>
-          <p>
-            Pengajuan sedang diverifikasi.
-          </p>
         </div>
-      </div>
-    )}
 
-    {status === "Selesai" && (
-      <div className="timeline-item">
-        <div className="timeline-dot"></div>
+        {/* TIMELINE */}
+        <div className="detail-section">
 
-        <div className="timeline-content">
-          <h4>Selesai</h4>
-          <p>
-            Pengajuan telah Selesai.
-          </p>
+          <h3>Status Pengajuan</h3>
+
+          <div className="timeline">
+
+            <div className="timeline-item">
+              <div className="timeline-dot"></div>
+
+              <div className="timeline-content">
+                <h4>Pengajuan Dikirim</h4>
+                <p>
+                  Pengajuan telah masuk ke sistem.
+                </p>
+              </div>
+            </div>
+
+            {(status === "Diproses" ||
+              status === "Selesai") && (
+              <div className="timeline-item">
+                <div className="timeline-dot"></div>
+
+                <div className="timeline-content">
+                  <h4>Diproses Admin</h4>
+                  <p>
+                    Pengajuan sedang diverifikasi.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {status === "Selesai" && (
+              <div className="timeline-item">
+                <div className="timeline-dot"></div>
+
+                <div className="timeline-content">
+                  <h4>Selesai</h4>
+                  <p>
+                    Pengajuan telah Selesai.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {status === "Ditolak" && (
+              <div className="timeline-item">
+                <div
+                  className="timeline-dot"
+                  style={{
+                    background: "#dc2626",
+                  }}
+                ></div>
+
+                <div className="timeline-content">
+                  <h4>Ditolak</h4>
+                  <p>
+                    Pengajuan ditolak oleh admin.
+                  </p>
+                </div>
+              </div>
+            )}
+
+          </div>
+
         </div>
-      </div>
-    )}
 
-    {status === "Ditolak" && (
-      <div className="timeline-item">
-        <div
-          className="timeline-dot"
-          style={{
-            background: "#dc2626",
-          }}
-        ></div>
+        <div className="detail-section">
 
-        <div className="timeline-content">
-          <h4>Ditolak</h4>
-          <p>
-            Pengajuan ditolak oleh admin.
-          </p>
+          <h3>Catatan Admin</h3>
+
+          <textarea
+            rows="5"
+            value={catatanAdmin}
+            onChange={(e) =>
+              setCatatanAdmin(e.target.value)
+            }
+            placeholder="Tulis catatan..."
+          ></textarea>
+
         </div>
-      </div>
-    )}
-
-  </div>
-
-</div>
-
-<div className="detail-section">
-
-<h3>Catatan Admin</h3>
-
-<textarea
-rows="5"
-value={catatanAdmin}
-onChange={(e)=>
-setCatatanAdmin(e.target.value)
-}
-placeholder="Tulis catatan..."
-></textarea>
-
-</div>
 
         {/* DATA PEGAWAI */}
         <div className="detail-section">
@@ -480,121 +419,121 @@ placeholder="Tulis catatan..."
 
             <div>
               <div>
-  <label>Jenis Layanan</label>
-  <p>
-    {data.sub_layanan || data.layanan}
-  </p>
-</div>
+                <label>Jenis Layanan</label>
+                <p>
+                  {data.sub_layanan || data.layanan}
+                </p>
+              </div>
             </div>
 
             <div>
               <label>Tanggal Pengajuan</label>
-<p>
-  {data.tanggal_pengajuan
-    ? new Date(data.tanggal_pengajuan).toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      })
-    : "-"}
-</p>
+              <p>
+                {data.tanggal_pengajuan
+                  ? new Date(data.tanggal_pengajuan).toLocaleDateString("id-ID", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "-"}
+              </p>
             </div>
 
-          
-</div>
-
-        </div>
-
-        {/* DOKUMEN */}
-<div className="detail-section">
-
-  <h3>Surat Permohonan</h3>
-
-  {
-    data.surat_permohonan ? (
-
-      <div className="document-card">
-
-        <div className="document-info">
-
-          <div>
-
-            <h4>Surat Permohonan</h4>
-
-            <p>
-              File yang diunggah oleh pemohon
-            </p>
 
           </div>
 
         </div>
 
-        <div className="document-actions">
+        {/* DOKUMEN */}
+        <div className="detail-section">
 
-          <a
-            href={`http://localhost:8080/${data.surat_permohonan}`}
-            target="_blank"
-            rel="noreferrer"
-            className="view-doc-btn"
-          >
-            👁 Lihat
-          </a>
+          <h3>Surat Permohonan</h3>
 
-          <a
-            href={`http://localhost:8080/${data.surat_permohonan}`}
-            download
-            className="download-doc-btn"
-          >
-            ⬇ Download
-          </a>
+          {
+            data.surat_permohonan ? (
+
+              <div className="document-card">
+
+                <div className="document-info">
+
+                  <div>
+
+                    <h4>Surat Permohonan</h4>
+
+                    <p>
+                      File yang diunggah oleh pemohon
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <div className="document-actions">
+
+                  <a
+                    href={`http://localhost:8080/${data.surat_permohonan}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="view-doc-btn"
+                  >
+                    👁 Lihat
+                  </a>
+
+                  <a
+                    href={`http://localhost:8080/${data.surat_permohonan}`}
+                    download
+                    className="download-doc-btn"
+                  >
+                    ⬇ Download
+                  </a>
+
+                </div>
+
+              </div>
+
+            ) : (
+
+              <p>Tidak ada surat permohonan.</p>
+
+            )
+          }
 
         </div>
 
-      </div>
+        <div className="detail-section">
 
-    ) : (
+          <h3>Dokumen Pendukung</h3>
 
-      <p>Tidak ada surat permohonan.</p>
+          {
+            data.link_drive ? (
 
-    )
-  }
+              <a
 
-</div>
+                href={data.link_drive}
 
-<div className="detail-section">
+                target="_blank"
 
-  <h3>Dokumen Pendukung</h3>
+                rel="noreferrer"
 
-  {
-    data.link_drive? (
+                className="drive-button"
 
-      <a
+              >
 
-        href={data.link_drive}
+                Folder Google Drive
 
-        target="_blank"
+              </a>
 
-        rel="noreferrer"
+            ) : (
 
-        className="drive-button"
+              <p>
+                Tidak ada link Google Drive.
+              </p>
 
-      >
+            )
 
-        Folder Google Drive
+          }
 
-      </a>
-
-    ) : (
-
-      <p>
-        Tidak ada link Google Drive.
-      </p>
-
-    )
-
-  }
-
-</div>
+        </div>
 
         {/* CATATAN ADMIN */}
         {catatanAdmin && (
@@ -609,96 +548,97 @@ placeholder="Tulis catatan..."
           </div>
         )}
 
-       <div className="response-upload">
+        <div className="response-upload">
 
-  <h3>Surat Balasan Admin</h3>
+          <h3>Surat Balasan Admin</h3>
 
-  {data.file_respon ? (
+          {data.file_respon ? (
 
-    <>
-      <p className="response-name">
-        ✅ {data.file_respon.split("/").pop()}
-      </p>
+            <>
+              <p className="response-name">
+                ✅ {data.file_respon.split("/").pop()}
+              </p>
 
-      <div className="document-actions">
+              <div className="document-actions">
 
-        <a
-          href={`http://localhost:8080/${data.file_respon}`}
-          target="_blank"
-          rel="noreferrer"
-          className="view-doc-btn"
-        >
-          👁 Lihat
-        </a>
+                <a
+                  href={`http://localhost:8080/${data.file_respon}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="view-doc-btn"
+                >
+                  👁 Lihat
+                </a>
 
-        <a
-          href={`http://localhost:8080/${data.file_respon}`}
-          download
-          className="download-doc-btn"
-        >
-          ⬇ Download
-        </a>
+                <a
+                  href={`http://localhost:8080/${data.file_respon}`}
+                  download
+                  className="download-doc-btn"
+                >
+                  ⬇ Download
+                </a>
 
-      </div>
-    </>
+              </div>
+            </>
 
-  ) : (
+          ) : (
 
-    <>
-      <label className="upload-response">
+            <>
+              <label className="upload-response">
 
-        <input
-          type="file"
-          accept=".pdf"
-          hidden
-          onChange={(e) => setSuratRespon(e.target.files[0])}
-        />
+                <input
+                  type="file"
+                  accept=".pdf"
+                  hidden
+                  onChange={(e) => setSuratRespon(e.target.files[0])}
+                />
 
-        Upload Surat Balasan
+                Upload Surat Balasan
 
-      </label>
+              </label>
 
-      {suratRespon && (
-        <p className="response-name">
-          ✅ {suratRespon.name}
-        </p>
-      )}
-    </>
+              {suratRespon && (
+                <p className="response-name">
+                  ✅ {suratRespon.name}
+                </p>
+              )}
+            </>
 
-  )}
+          )}
 
-</div>
+        </div>
 
         {/* AKSI */}
-<div className="action-buttons">
+        <div className="action-buttons">
 
-  <button
-    className="reject-btn"
-    onClick={handleReject}
-    disabled={status === "Ditolak"}
-  >
-    Tolak
-  </button>
+          <button
+            className="reject-btn"
+            onClick={handleReject}
+            disabled={status === "Ditolak"}
+          >
+            Tolak
+          </button>
 
-  <button
-    className="process-btn"
-    onClick={handleProcess}
-    disabled={status === "Diproses"}
-  >
-    Proses
-  </button>
+          <button
+            className="process-btn"
+            onClick={handleProcess}
+            disabled={status === "Diproses"}
+          >
+            Proses
+          </button>
 
-  <button
-    className="approve-btn"
-    onClick={handleApprove}
-    disabled={status === "Selesai"}
-  >
-    Selesai
-  </button>
+          <button
+            className="approve-btn"
+            onClick={handleApprove}
+            disabled={status === "Selesai"}
+          >
+            Selesai
+          </button>
 
-</div>
+        </div>
 
       </div>
 
     </div>
-  )}
+  );
+}
