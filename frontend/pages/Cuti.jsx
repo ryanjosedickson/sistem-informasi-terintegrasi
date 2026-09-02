@@ -29,6 +29,14 @@ const [sisaCuti, setSisaCuti] = useState("");
   const [jabatan, setJabatan] = useState("");
   const [unitKerja, setUnitKerja] = useState("");
 
+  // Sisa cuti tahunan SEBENARNYA (berdasarkan histori pemakaian
+  // tahun berjalan), diambil dari endpoint /api/cuti/sisa/{nip}
+  const [sisaCutiSebenarnya, setSisaCutiSebenarnya] = useState(12);
+
+  // Daftar tanggal hari libur (nasional + cuti bersama),
+  // dipakai supaya preview durasi tidak ikut menghitung hari itu
+  const [hariLiburList, setHariLiburList] = useState([]);
+
   //==========================
   // CUTI
   //==========================
@@ -70,6 +78,54 @@ const [sisaCuti, setSisaCuti] = useState("");
     useState("");
 
       //==========================
+  // AUTO-FILL DARI AKUN LOGIN
+  //==========================
+
+  useEffect(() => {
+    const nipLogin = localStorage.getItem("userNIP");
+
+    if (!nipLogin) return;
+
+    setNip(nipLogin);
+
+    fetch(`http://localhost:8080/api/pegawai/${nipLogin}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          setNama(data.nama || "");
+          setJabatan(data.jabatan || "");
+          setUnitKerja(data.unit_organisasi || "");
+        }
+      })
+      .catch((err) => console.error(err));
+
+    // Ambil sisa cuti tahunan SEBENARNYA (sudah memperhitungkan
+    // histori pemakaian tahun ini), bukan asumsi 12 hari utuh
+    fetch(`http://localhost:8080/api/cuti/sisa/${nipLogin}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.sisa === "number") {
+          setSisaCutiSebenarnya(data.sisa);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  //==========================
+  // AMBIL DAFTAR HARI LIBUR
+  //==========================
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/hari-libur")
+      .then((res) => res.json())
+      .then((result) => {
+        const daftarTanggal = (result.data || []).map((h) => h.tanggal);
+        setHariLiburList(daftarTanggal);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  //==========================
   // JENIS CUTI
   //==========================
 
@@ -123,19 +179,30 @@ const [sisaCuti, setSisaCuti] = useState("");
     if (selesai < mulai) return;
 
     // Total hari
-// Hitung hari kerja (Senin–Jumat)
+// Hitung hari kerja (Senin–Jumat, DAN bukan hari libur/cuti bersama)
 let totalHari = 0;
 
 let current = new Date(mulai);
 
+// Helper format tanggal lokal (hindari pergeseran akibat toISOString yang pakai UTC)
+const formatTanggalLokal = (d) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
 while (current <= selesai) {
 
   const hari = current.getDay();
+  const tanggalStr = formatTanggalLokal(current);
 
   // Minggu = 0
   // Sabtu = 6
+  const isWeekend = hari === 0 || hari === 6;
+  const isHariLibur = hariLiburList.includes(tanggalStr);
 
-  if (hari !== 0 && hari !== 6) {
+  if (!isWeekend && !isHariLibur) {
     totalHari++;
   }
 
@@ -145,7 +212,7 @@ while (current <= selesai) {
 
 setDurasi(totalHari);
 if (jenisCuti === "Cuti Tahunan") {
-    setSisaCuti(Math.max(0, 12 - totalHari));
+    setSisaCuti(Math.max(0, sisaCutiSebenarnya - totalHari));
 } else {
     setSisaCuti("-");
 }
@@ -183,7 +250,7 @@ if (jenisCuti === "Cuti Tahunan") {
 
     }
 
-}, [tanggalMulai, tanggalSelesai, jenisCuti]);
+}, [tanggalMulai, tanggalSelesai, jenisCuti, hariLiburList, sisaCutiSebenarnya]);
 
     //========================================
   // AMBIL DATA PEGAWAI BERDASARKAN NIP
@@ -251,49 +318,6 @@ if (jenisCuti === "Cuti Tahunan") {
 
   window.open(url);
 };
-
-  const handleNipChange = async (e) => {
-
-    const value = e.target.value;
-
-    setNip(value);
-
-    if (value.length < 5) {
-
-      setNama("");
-      setJabatan("");
-      setUnitKerja("");
-
-      return;
-    }
-
-    try {
-
-      const response = await fetch(
-        `http://localhost:8080/api/pegawai/${value}`
-      );
-
-      const data = await response.json();
-
-      if (data) {
-
-        setNama(data.nama || "");
-
-        setJabatan(data.jabatan || "");
-
-        setUnitKerja(
-          data.unit_organisasi || ""
-        );
-
-      }
-
-    } catch (err) {
-
-      console.error(err);
-
-    }
-
-  };
 
     //========================================
   // SUBMIT PENGAJUAN
@@ -703,11 +727,9 @@ if (jenisCuti === "Cuti Tahunan") {
 
               type="text"
 
-              placeholder="Masukkan NIP"
-
               value={nip}
 
-              onChange={handleNipChange}
+              readOnly
 
             />
 

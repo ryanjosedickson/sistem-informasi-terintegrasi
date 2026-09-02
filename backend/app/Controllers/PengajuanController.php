@@ -389,14 +389,28 @@ private function hitungHariKerja($mulai, $selesai)
     $interval = new \DateInterval("P1D");
     $periode = new \DatePeriod($start, $interval, $end);
 
+    // Ambil semua tanggal hari libur (libur nasional + cuti bersama)
+    // yang jatuh di rentang tanggal pengajuan, supaya tidak ikut
+    // memotong jatah cuti tahunan
+    $db = \Config\Database::connect();
+    $liburRows = $db->table('hari_libur')
+        ->select('tanggal')
+        ->where('tanggal >=', $mulai)
+        ->where('tanggal <=', $selesai)
+        ->get()
+        ->getResultArray();
+
+    $tanggalLibur = array_column($liburRows, 'tanggal');
+
     $hariKerja = 0;
 
     foreach ($periode as $tanggal) {
 
         $hari = $tanggal->format("N");
+        $tanggalStr = $tanggal->format("Y-m-d");
 
-        // Senin=1 ... Jumat=5
-        if ($hari <= 5) {
+        // Senin=1 ... Jumat=5, DAN bukan tanggal yang ada di hari_libur
+        if ($hari <= 5 && !in_array($tanggalStr, $tanggalLibur, true)) {
             $hariKerja++;
         }
 

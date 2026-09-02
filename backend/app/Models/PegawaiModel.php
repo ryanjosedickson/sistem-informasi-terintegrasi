@@ -16,6 +16,8 @@ class PegawaiModel extends Model
         'jabatan',
         'pangkat_golongan',
         'unit_organisasi',
+        'tempat_lahir',
+        'tanggal_lahir',
         // 'password' || *dihapus — auth pindah sepenuhnya ke UserModel
     ];
 }

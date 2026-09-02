@@ -355,6 +355,14 @@ $routes->get('helpdesk/dashboard','HelpdeskController::dashboard');
     
 });
 
+// CLAUDE-Hari Libur
+$routes->group('api', ['filter' => 'cors'], function ($routes) {
+    $routes->get('hari-libur', 'HariLiburController::index');
+    $routes->post('hari-libur', 'HariLiburController::create');
+    $routes->put('hari-libur/(:num)', 'HariLiburController::update/$1');
+    $routes->delete('hari-libur/(:num)', 'HariLiburController::delete/$1');
+});
+
 //kepegawaian
 $routes->post(
     'pdf/cuti/preview',

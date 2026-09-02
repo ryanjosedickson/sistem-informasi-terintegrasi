@@ -1,0 +1,285 @@
+.hariliburmodal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.hariliburmodal-card {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 760px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  padding: 28px;
+}
+
+.hariliburmodal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.hariliburmodal-header h2 {
+  color: #163b67;
+  font-size: 24px;
+  margin: 0;
+}
+
+.hariliburmodal-close {
+  border: none;
+  background: #f1f5f9;
+  color: #475569;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.hariliburmodal-close:hover {
+  background: #e2e8f0;
+}
+
+.hariliburmodal-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.hariliburmodal-year-filter {
+  height: 42px;
+  border: 1px solid #dbe4ee;
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 14px;
+  color: #334155;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.hariliburmodal-year-filter:focus {
+  outline: none;
+  background: white;
+  border-color: #2563eb;
+}
+
+.hariliburmodal-add-btn {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.hariliburmodal-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+}
+
+.hariliburmodal-table-wrapper {
+  border: 1px solid #e5eefc;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.hariliburmodal-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hariliburmodal-table th,
+.hariliburmodal-table td {
+  padding: 12px 16px;
+}
+
+.hariliburmodal-table th:nth-child(1),
+.hariliburmodal-table td:nth-child(1) {
+  white-space: nowrap;
+}
+
+.hariliburmodal-table th:nth-child(3),
+.hariliburmodal-table td:nth-child(3) {
+  width: 160px;
+  white-space: nowrap;
+}
+
+.hariliburmodal-table th {
+  background: #f8fafc;
+  text-align: left;
+  color: #163b67;
+  font-size: 13px;
+}
+
+.hariliburmodal-table td {
+  border-top: 1px solid #eef2f7;
+  color: #334155;
+  font-size: 14px;
+}
+
+.hariliburmodal-empty {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+}
+
+.hariliburmodal-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hariliburmodal-badge.libur-nasional {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.hariliburmodal-badge.cuti-bersama {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.hariliburmodal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.hariliburmodal-edit-btn,
+.hariliburmodal-delete-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.hariliburmodal-edit-btn {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.hariliburmodal-edit-btn:hover {
+  background: #dbeafe;
+}
+
+.hariliburmodal-delete-btn {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.hariliburmodal-delete-btn:hover {
+  background: #fee2e2;
+}
+
+/* FORM TAMBAH/EDIT */
+
+.hariliburmodal-form h3 {
+  color: #163b67;
+  margin-bottom: 20px;
+}
+
+.hariliburmodal-form-group {
+  margin-bottom: 18px;
+}
+
+.hariliburmodal-form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.hariliburmodal-form-group input,
+.hariliburmodal-form-group select {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #dbe4ee;
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 14px;
+  background: #f8fafc;
+  box-sizing: border-box;
+}
+
+.hariliburmodal-form-group input:focus,
+.hariliburmodal-form-group select:focus {
+  outline: none;
+  background: white;
+  border-color: #2563eb;
+}
+
+.hariliburmodal-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.hariliburmodal-cancel-btn {
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hariliburmodal-cancel-btn:hover {
+  background: #e2e8f0;
+}
+
+.hariliburmodal-save-btn {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hariliburmodal-save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+}
+
+@media (max-width: 600px) {
+  .hariliburmodal-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .hariliburmodal-year-filter {
+    width: 100%;
+  }
+
+  .hariliburmodal-table th,
+  .hariliburmodal-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  .hariliburmodal-actions {
+    flex-direction: column;
+  }
+}

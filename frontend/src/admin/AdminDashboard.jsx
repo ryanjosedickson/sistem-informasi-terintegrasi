@@ -9,6 +9,8 @@ import {
   useEffect,
 } from "react";
 
+import HariLiburModal from "./HariLiburModal";
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   console.log("AdminDashboard dirender");
@@ -29,6 +31,7 @@ if (!isLoggedIn || role !== "admin_kepegawaian") {
 
   const [search, setSearch] = useState("");
 const [pengajuan, setPengajuan] = useState([]);
+const [showHariLibur, setShowHariLibur] = useState(false);
 
 useEffect(() => {
   fetch("http://localhost:8080/api/pengajuan")
@@ -113,6 +116,12 @@ const getCountdown = (mulai, selesai) => {
     onClick={() => navigate("/admin-kepegawaian/cuti")}
   >
     Pengajuan Cuti
+  </li>
+
+  <li
+    onClick={() => setShowHariLibur(true)}
+  >
+    Hari Libur
   </li>
 
   <li
@@ -239,6 +248,10 @@ const getCountdown = (mulai, selesai) => {
         </div>
 
       </main>
+
+      {showHariLibur && (
+        <HariLiburModal onClose={() => setShowHariLibur(false)} />
+      )}
 
     </div>
   );
